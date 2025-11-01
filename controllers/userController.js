@@ -21,7 +21,7 @@ const insertUser= async(req,res)=>{
         const userData= await user.save();
 
         if(userData){
-            res.render('registration',{message:"Your Registration has been successfull, Please verify your Email..."})
+            res.render('registration',{message:"Your Registration has been successfull, Please verify your Mail..."})
         }else{
             res.render('registration',{message:"Your Registration has been successfull..."})
         }
