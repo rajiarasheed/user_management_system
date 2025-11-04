@@ -24,7 +24,7 @@ const sendVerifyMail=async(name,email,user_id)=>{
             secure:false,requireTLS:true,
             auth:{
                 user:'rajiaabdulrasheed@gmail.com',
-                pass:'xvmnkfyvhrnebtjk'
+                pass:'asdfghjklqwertyu'
             }
         })
         const mailOptions ={
@@ -96,11 +96,58 @@ const verifyMail= async(req,res)=>{
         
     }
 }
+
+// Login users starts
+const loginLoad = async(req,res)=>{
+    try {
+        res.render('login')
+    } catch (error) {
+        console.log();
+        
+    }
+}
+const verifyLogin = async(req,res)=>{
+    try {
+        const email=req.body.email;
+        const password=req.body.password;
+        const userData=await User.findOne({email:email});
+        if (userData) {
+            const passMatch = await bcrypt.compare(password,userData.password);
+            if (passMatch) {
+                if (userData.is_verified ==0) {
+                    res.render('login',{message:"Please verify your mail"})
+                } else {
+                    req.session.user_id=userData._id;
+                    res.redirect('/home');
+                }
+                
+            } else {
+                res.render('login',{message:"Email and Password is incorrect"})
+            }
+        }else{
+            res.render('login',{message:"Email and Password is incorrect"})
+        }
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+const loadHome=async (req,res) => {
+    try {
+        res.render('home')
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
 module.exports={
     loadRegister,
     insertUser,
-    verifyMail
+    verifyMail,
+    loginLoad,
+    verifyLogin,
+    loadHome
 }
 
 
-// xvmnkfyvhrnebtjk
