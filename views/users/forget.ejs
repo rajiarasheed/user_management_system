@@ -1,6 +1,6 @@
 <% include('../layouts/header.ejs') %>
 
-<h1>Login</h1>
+<h1>Forget</h1>
 
 <% 
     if (typeof message !== 'undefined') {
@@ -9,13 +9,10 @@
         <%
     }
 %>
-<form action="/login" method="post">
+<form action="/forget" method="post">
     <input type="email" name="email" placeholder="Enter email" required>
     <br><br>
-    <input type="password" name="password" placeholder="Enter password" required>
-    <br><br>
-    <input type="submit" value="Login">
+    <input type="submit" value="Send Reset Link">
 </form>
-<a href="/forget">Forget password?</a>
-<a href="/verification">Verify</a>
+
 <% include('../layouts/footer.ejs') %>
