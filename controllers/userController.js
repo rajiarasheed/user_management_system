@@ -254,6 +254,29 @@ const userLogout = async (req, res) => {
         console.log(error.message);
     }
 };
+const loadVerification=async (req,res) => {
+    try {
+        res.render("verification");
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+const sendVerificationLink=async (req,res) => {
+    try {
+        const email=req.body.email
+        const userData= await User.findOne({email:email});
+        if (userData) {
+            sendVerifyMail(userData.name,userData.email,userData._id);
+            res.render("verification",{message:"Reset verification send, Please check your mail"})
+        } else {
+            res.render("verification",{message:"This email is not exist"})
+        }
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
 
 module.exports={
     loadRegister,
@@ -267,7 +290,8 @@ module.exports={
     loadForgetPassword,
     resetPassword,
     userLogout,
-   
+    loadVerification,
+    sendVerificationLink
 }
 
 
