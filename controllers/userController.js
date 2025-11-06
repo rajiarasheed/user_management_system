@@ -172,7 +172,9 @@ const verifyLogin = async(req,res)=>{
 
 const loadHome=async (req,res) => {
     try {
-        res.render('home')
+        const userData= await User.findById({_id:req.session.user_id});
+
+        res.render('home',{user:userData});
     } catch (error) {
         console.log(error.message);
         
@@ -278,6 +280,36 @@ const sendVerificationLink=async (req,res) => {
     }
 }
 
+const loadEdit= async (req,res) => {
+    try {
+        const id=req.query.id;
+        const userData=await User.findById({_id:id});
+
+        if (userData) {
+            res.render('edit',{user:userData});
+        } else {
+            res.redirect('home')
+        }
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+const updateProfile=async (req,res) => {
+    try {
+        if (req.file) {
+            const userData= await User.findByIdAndUpdate({_id:req.body.user_id},{$set:{name:req.body.name,email:req.body.email,mobile:req.body.mobile,image:req.file.filename}})
+  
+        } else {
+            const userData= await User.findByIdAndUpdate({_id:req.body.user_id},{$set:{name:req.body.name,email:req.body.email,mobile:req.body.mobile}})
+           
+        }
+         res.redirect('home')
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
 module.exports={
     loadRegister,
     insertUser,
@@ -291,7 +323,9 @@ module.exports={
     resetPassword,
     userLogout,
     loadVerification,
-    sendVerificationLink
+    sendVerificationLink,
+    loadEdit,
+    updateProfile
 }
 
 
