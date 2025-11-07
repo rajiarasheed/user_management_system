@@ -58,7 +58,8 @@ const sendRestPasswordMail=async(name,email,token)=>{
         const transporter=nodemailer.createTransport({
             host:'smtp.gmail.com',
             port:587,
-            secure:false,requireTLS:true,
+            secure:false,
+            requireTLS:true,
             auth:{
                 user:config.emailUser,
                 pass:config.emailPassword

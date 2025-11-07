@@ -1,0 +1,15 @@
+<% include("../layouts/header") %>
+
+<h1>Forget</h1>
+<form action="/admin/forget" method="post">
+    <input type="email" name="email"placeholder="Enter email">
+    <br><br>
+    <input type="submit" value="Rest Password">
+</form>
+<% 
+if (typeof message !== 'undefined') {
+    %>
+    <p><%= message %></p>
+    <%
+}  %>
+<% include("../layouts/header") %>

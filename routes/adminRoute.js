@@ -23,7 +23,12 @@ admin_route.get('/',auth.isLogout, adminController.loadLogin);
 admin_route.post('/',adminController.verifyLogin);
 
 admin_route.get('/home',auth.isLogin,adminController.loadDashboard)
-admin_route.get('/logout',auth.isLogin,adminController.logout)
+admin_route.get('/logout',auth.isLogin,adminController.logout);
+admin_route.get('/forget',auth.isLogout,adminController.loadForget);
+admin_route.post('/forget',adminController.forgetVerify);
+admin_route.get('/forget-password',auth.isLogout,adminController.loadForgetPassword);
+admin_route.post('/forget-password',adminController.resetPassword);
+
 
 // 404 handler
 admin_route.use((req, res) => {
