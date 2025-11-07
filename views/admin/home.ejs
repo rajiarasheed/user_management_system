@@ -1,3 +1,22 @@
-<h1>welcom admin page</h1>
+<% include("../layouts/header") %>
+
+<h1>welcome, <%= admin.name %></h1>
+
+<a href="/admin/dashboard">Dashboard</a>
+<table width="50%">
+    <tr>
+        <img src="/userImages/<%= admin.image %>" alt="<%= admin.image %>" width="100px" height="100px">
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td><%= admin.email  %></td>
+    </tr>
+    <tr>
+        <td>Mobile Number</td>
+        <td><%= admin.mobile  %></td>
+    </tr>
+</table>
 
 <a href="/admin/logout">Logout</a>
+
+<% include("../layouts/header") %>

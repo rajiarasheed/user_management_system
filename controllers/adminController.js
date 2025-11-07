@@ -92,7 +92,8 @@ const loadDashboard=async (req,res) => {
             // If not logged in as admin
             return res.redirect("/admin");
         }
-        res.render('home')
+        const userData=await User.findById({_id:req.session.admin_id})
+        res.render('home',{admin:userData})
     } catch (error) {
         console.log(error.message);
         
@@ -175,7 +176,14 @@ const resetPassword=async (req,res) => {
         
     }
 }
-
+const adminDashboard= async (req,res) => {
+    try {
+        res.render('dashboard')
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
 module.exports={
     loadLogin,
     verifyLogin,
@@ -184,5 +192,6 @@ module.exports={
     loadForget,
     forgetVerify,
     loadForgetPassword,
-    resetPassword
+    resetPassword,
+    adminDashboard
 }

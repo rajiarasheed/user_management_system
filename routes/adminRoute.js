@@ -28,7 +28,7 @@ admin_route.get('/forget',auth.isLogout,adminController.loadForget);
 admin_route.post('/forget',adminController.forgetVerify);
 admin_route.get('/forget-password',auth.isLogout,adminController.loadForgetPassword);
 admin_route.post('/forget-password',adminController.resetPassword);
-
+admin_route.get('/dashboard',auth.isLogin,adminController.adminDashboard);
 
 // 404 handler
 admin_route.use((req, res) => {
