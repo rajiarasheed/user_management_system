@@ -14,6 +14,46 @@ const securePassword= async (password) => {
     }
 }
 
+
+// send add user verification mail
+const addUserMail=async(name,email,password,user_id)=>{
+    try {
+        const transporter=nodemailer.createTransport({
+            host:'smtp.gmail.com',
+            port:587,
+            secure:false,requireTLS:true,
+            auth:{
+                user:config.emailUser,
+                pass:config.emailPassword
+            }
+        })
+        const mailOptions ={
+            from:config.emailUser,
+            to:email,
+            subject:'Admin add you and verify your mail',
+            html:`<p>Hi,${name},Please click to <a href="http://localhost:3000/register/verify?id=${user_id}"> Verify</a> your mail.</p>
+            <br><b>Email:-</b> ${email}<br>
+            <b>Password:-</b> ${password}`,
+            // html:'<p>Hi,'+name+ ',Please click to <a href="http://localhost:3000/register/verify?id='+user_id+'"> Verify</a> your mail.</p>'
+        }
+      
+        transporter.sendMail(mailOptions,function(error,info){
+            if(error){
+                console.log(error);
+                
+            }else{
+                console.log("Email has been send:",info.response);
+                
+            }
+        })
+        
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+// for reset password mail
 const sendResetPasswordMail= async (name,email,token) => {
     try {
         const transporter= nodemailer.createTransport({
@@ -178,12 +218,56 @@ const resetPassword=async (req,res) => {
 }
 const adminDashboard= async (req,res) => {
     try {
-        res.render('dashboard')
+        const usersData= await User.find({is_admin:0})
+        res.render('dashboard',{users:usersData})
     } catch (error) {
         console.log(error.message);
         
     }
 }
+const loadNewUser=async (req,res) => {
+    try {
+        res.render('new-user')
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+
+
+const addNewUser= async(req,res)=>{
+    try{
+        const password=randomstring.generate(8)
+        const spassword=await securePassword(password)
+        // const spassword=await securePassword(req.body.password)
+        const user= new User({
+            name:req.body.name,
+            email:req.body.email,
+            mobile:req.body.mobile,
+            image:req.file.filename,
+            password:spassword,
+            is_admin:0
+        });
+        const userData= await user.save();
+
+        if(userData){
+            
+            
+            addUserMail(userData.name,userData.email,password,userData._id)
+            // sendVerifyMail(req.body.name,req.body.email,userData._id)
+            res.redirect('/admin/dashboard')
+        }else{
+            
+            res.render('new-user',{message:"Something wrong..."})
+        }
+    }catch(error){
+        console.log(error.message);
+        
+    }
+}
+
+
 module.exports={
     loadLogin,
     verifyLogin,
@@ -193,5 +277,7 @@ module.exports={
     forgetVerify,
     loadForgetPassword,
     resetPassword,
-    adminDashboard
+    adminDashboard,
+    loadNewUser,
+    addNewUser
 }

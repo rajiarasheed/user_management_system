@@ -13,6 +13,21 @@ admin_route.set('view engine','ejs');
 admin_route.set('views','./views/admin');
 const auth=require('../middleware/adminAuth');
 
+const multer = require('multer');
+const path = require('path');
+
+admin_route.use(express.static('public'))
+const storage = multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,path.join(__dirname,'../public/userImages'));
+
+    },
+    filename:function(req,file,cb){
+        const name=Date.now()+'-'+file.originalname;
+        cb(null,name);
+    }
+})
+const upload= multer({storage:storage})
 const adminController=require("../controllers/adminController")
 
 const bodyParser=require('body-parser');
@@ -29,6 +44,8 @@ admin_route.post('/forget',adminController.forgetVerify);
 admin_route.get('/forget-password',auth.isLogout,adminController.loadForgetPassword);
 admin_route.post('/forget-password',adminController.resetPassword);
 admin_route.get('/dashboard',auth.isLogin,adminController.adminDashboard);
+admin_route.get('/new-user',auth.isLogin,adminController.loadNewUser);
+admin_route.post('/new-user',auth.isLogin,upload.single('image'),adminController.addNewUser);
 
 // 404 handler
 admin_route.use((req, res) => {
