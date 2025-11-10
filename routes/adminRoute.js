@@ -46,6 +46,7 @@ admin_route.post('/forget-password',adminController.resetPassword);
 admin_route.get('/dashboard',auth.isLogin,adminController.adminDashboard);
 admin_route.get('/new-user',auth.isLogin,adminController.loadNewUser);
 admin_route.post('/new-user',auth.isLogin,upload.single('image'),adminController.addNewUser);
+admin_route.get('/edit-user',auth.isLogin,adminController.loadEditUser);
 
 // 404 handler
 admin_route.use((req, res) => {

@@ -266,7 +266,16 @@ const addNewUser= async(req,res)=>{
         
     }
 }
-
+const loadEditUser= async (req,res) => {
+    try {
+        const id=req.query.id;
+        const userData= await User.findById({_id:id})
+       res.render('edit-user') 
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
 
 module.exports={
     loadLogin,
@@ -279,5 +288,6 @@ module.exports={
     resetPassword,
     adminDashboard,
     loadNewUser,
-    addNewUser
+    addNewUser,
+    loadEditUser
 }

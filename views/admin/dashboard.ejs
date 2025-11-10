@@ -12,6 +12,7 @@
         <th>Mobile</th>
         <th>Image</th>
         <th>Verified</th>
+        <th>Action</th>
     </tr>
     <% 
     if (users.length>0) {
@@ -32,7 +33,11 @@
                        <p>verified</p>
                        <% 
                     }
-                    %></td>
+                    %>
+                </td>
+                <td>
+                    <a href="/admin/edit-user">Edit</a>
+                </td>
             </tr>
             <%
         }
