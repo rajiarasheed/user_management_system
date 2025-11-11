@@ -1,7 +1,10 @@
 const mongoose= require("mongoose");
-mongoose.connect("mongodb://127.0.0.1:27017/user_management_system");
-
 const express= require("express");
+const config=require('./config/config');
+mongoose.connect(config.mongoURI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log("DB connection error:", err));
+
 const app=express();
 
 // for user routes
@@ -13,4 +16,4 @@ const adminRoute=require("./routes/adminRoute");
 app.use("/admin",adminRoute);
 
 
-app.listen(3000,()=>console.log("Server running..."));
+app.listen(config.port,()=>console.log("Server running..."));

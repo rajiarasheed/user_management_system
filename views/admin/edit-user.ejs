@@ -3,15 +3,29 @@
 <h1>Edit User</h1>
 
 
-<form action="/admin" method="post">
-    <input type="text" name="name" placeholder="Enter name" required>
+<form action="/admin/edit-user" method="post">
+    <input type="text" name="name" placeholder="Enter name" value="<%= user.name %>" required>
     <br><br>
-    <input type="email" name="email" placeholder="Enter email" required>
+    <input type="email" name="email" placeholder="Enter email" value="<%= user.email %>" required>
     <br><br>
-    <input type="text" name="mobile" placeholder="Enter mobile" required>
+    <input type="text" name="mobile" placeholder="Enter mobile" value="<%= user.mobile %>" required>
     <br><br>
+    <label>Verified</label>
+    <input type="radio" name="verify" value="1" <% if (user.is_verified ==1) {%>
+    checked
+    <%
+        
+    } %>>
+    <label>Unverified</label>
+    <input type="radio" name="verify" value="0" <% if (user.is_verified ==0) {%>
+    checked
+    <%
+        
+    } %>>
+    <br><br>
+    <input type="hidden" name="id" value="<%= user.id %>">
     <input type="submit" value="Update User">
 </form>
-<a href="/admin/dashboard">Go to Back</a>
+<a href="/admin/dashboard">Go to Dashboard</a>
 
 <% include('../layouts/footer.ejs') %></br>

@@ -1,9 +1,11 @@
-const sessionSecret="mysitesessionsecretw";
+// Load variables from .env
+require('dotenv').config()
 
-const emailUser="rajiaabdulrasheed@gmail.com";
-const emailPassword="xvmnkfyvhrnebtjk"
+
 module.exports={
-    sessionSecret,
-    emailUser,
-    emailPassword
-}
+    sessionSecret:process.env.SESSION_SECRET,
+    emailUser:process.env.EMAIL_USER,
+    emailPassword:process.env.EMAIL_PASSWORD,
+    mongoURI:process.env.MONGODB_URI,
+    port:process.env.PORT || 3000
+};
