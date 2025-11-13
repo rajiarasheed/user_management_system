@@ -1,8 +1,7 @@
 const User=require("../models/userModel");
 const bcrypt= require('bcrypt');
 const randomstring= require("randomstring");
-const config= require('../config/config');
-const nodemailer=require('nodemailer')
+const { sendAddUserMail, sendResetPasswordMail } = require('../utils/mailer')
 
 const securePassword= async (password) => {
     try {
@@ -15,77 +14,6 @@ const securePassword= async (password) => {
 }
 
 
-// send add user verification mail
-const addUserMail=async(name,email,password,user_id)=>{
-    try {
-        const transporter=nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,requireTLS:true,
-            auth:{
-                user:config.emailUser,
-                pass:config.emailPassword
-            }
-        })
-        const mailOptions ={
-            from:config.emailUser,
-            to:email,
-            subject:'Admin add you and verify your mail',
-            html:`<p>Hi,${name},Please click to <a href="http://localhost:3000/register/verify?id=${user_id}"> Verify</a> your mail.</p>
-            <br><b>Email:-</b> ${email}<br>
-            <b>Password:-</b> ${password}`,
-            // html:'<p>Hi,'+name+ ',Please click to <a href="http://localhost:3000/register/verify?id='+user_id+'"> Verify</a> your mail.</p>'
-        }
-      
-        transporter.sendMail(mailOptions,function(error,info){
-            if(error){
-                console.log(error);
-                
-            }else{
-                console.log("Email has been send:",info.response);
-                
-            }
-        })
-        
-    } catch (error) {
-        console.log(error.message);
-        
-    }
-}
-
-// for reset password mail
-const sendResetPasswordMail= async (name,email,token) => {
-    try {
-        const transporter= nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,
-            requireTLS:true,
-            auth:{
-                user:config.emailUser,
-                pass:config.emailPassword
-            }
-        })
-        const mailOptions= {
-            from:config.emailUser,
-            to:email,
-            subject:"For Rest Password",
-            html:`<p>Hi ${name}, Please click to <a href="http://localhost:3000/admin/forget-password?token=${token}">Reset </a>your Password </P`
-        }
-        transporter.sendMail(mailOptions,function (error,info) {
-            if (error) {
-                console.log(error);
-                
-            } else {
-                console.log("Email send",info.response);
-                
-            }
-        })
-    } catch (error) {
-        console.log(error.message);
-        
-    }
-}
 // for load login page
 const loadLogin=async (req,res) => {
     try {
@@ -254,7 +182,7 @@ const addNewUser= async(req,res)=>{
         if(userData){
             
             
-            addUserMail(userData.name,userData.email,password,userData._id)
+            sendAddUserMail(userData.name,userData.email,password,userData._id)
             // sendVerifyMail(req.body.name,req.body.email,userData._id)
             res.redirect('/admin/dashboard')
         }else{

@@ -1,10 +1,9 @@
 const User = require("../models/userModel");
 
 const bcrypt = require('bcrypt');
+const randomstring=require('randomstring');
+const { sendVerifyMail, sendResetPasswordMail } = require('../utils/mailer')
 
-const nodemailer=require('nodemailer');
-const config=require('../config/config');
-const randomstring=require('randomstring')
 
 const securePassword=async(password)=>{
     try {
@@ -16,78 +15,6 @@ const securePassword=async(password)=>{
     }
 }
 
-// send verification mail
-const sendVerifyMail=async(name,email,user_id)=>{
-    try {
-        const transporter=nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,requireTLS:true,
-            auth:{
-                user:config.emailUser,
-                pass:config.emailPassword
-            }
-        })
-        const mailOptions ={
-            from:config.emailUser,
-            to:email,
-            subject:'For verification mail',
-            html:`<p>Hi,${name},Please click to <a href="http://localhost:3000/register/verify?id=${user_id}"> Verify</a> your mail.</p>`,
-            // html:'<p>Hi,'+name+ ',Please click to <a href="http://localhost:3000/register/verify?id='+user_id+'"> Verify</a> your mail.</p>'
-        }
-      
-        transporter.sendMail(mailOptions,function(error,info){
-            if(error){
-                console.log(error);
-                
-            }else{
-                console.log("Email has been send:",info.response);
-                
-            }
-        })
-        
-    } catch (error) {
-        console.log(error.message);
-        
-    }
-}
-
-// send reset password mail
-const sendRestPasswordMail=async(name,email,token)=>{
-    try {
-        const transporter=nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,
-            requireTLS:true,
-            auth:{
-                user:config.emailUser,
-                pass:config.emailPassword
-            }
-        })
-        const mailOptions ={
-            from:config.emailUser,
-            to:email,
-            subject:'For Reset Password',
-            html:`<p>Hi,${name},Please click to <a href="http://localhost:3000/forget-password?token=${token}"> Reset</a> your password.</p>`,
-            // html:'<p>Hi,'+name+ ',Please click to <a href="http://localhost:3000/register/verify?id='+user_id+'"> Verify</a> your mail.</p>'
-        }
-      
-        transporter.sendMail(mailOptions,function(error,info){
-            if(error){
-                console.log(error);
-                
-            }else{
-                console.log("Email has been send:",info.response);
-                
-            }
-        })
-        
-    } catch (error) {
-        console.log(error.message);
-        
-    }
-}
 
 const loadRegister=async(req,res)=>{
     try {
@@ -124,10 +51,11 @@ const insertUser= async(req,res)=>{
     }
 }
 
+
 const verifyMail= async(req,res)=>{
     try {
        const updateInfo= await User.updateOne({_id:req.query.id},{$set:{is_verified:1}})
-        console.log(updateInfo);
+      
         res.render("email-verified")
     } catch (error) {
         console.log(error.message);
@@ -199,11 +127,11 @@ const forgetVerify= async (req,res) => {
         if (userData) {
             
             if (userData.is_verified===0) {
-                res.render('forget',{message:"Plz verify your mail."})
+                res.render('forget',{message:"Please verify your email first."})
             } else {
                 const randomString=randomstring.generate();
                 const updatedData= await User.updateOne({email:email},{$set:{token:randomString}});
-                sendRestPasswordMail(userData.name,userData.email,randomString);
+                sendResetPasswordMail(userData.name,userData.email,randomString);
                  res.render('forget',{message:"Please check your mail to reset password."})
             }
         } else {
