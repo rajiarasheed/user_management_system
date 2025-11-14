@@ -1,26 +1,62 @@
 <% include('../layouts/header.ejs') %>
 
 <h1>User Registration Form</h1>
+
 <form action="/register" method="post" enctype="multipart/form-data">
-    <input type="text" name="name" placeholder="Enter Name" required>
-    <br><br>
-    <input type="email" name="email" placeholder="Enter Email" required>
-    <br><br>
-    <input type="text" name="mobile" placeholder="Enter Mobile" required>
-    <br><br>
-    <input type="file" name="image" required>
-    <br><br>
-    <input type="password" name="password" placeholder="Enter Password" required>
-    <br><br>
-    <input type="submit" value="Register">
+  <input type="text" name="name" placeholder="Enter Name" required />
+  <br /><br />
+
+  <input type="email" name="email" placeholder="Enter Email" required />
+  <br /><br />
+
+  <input type="text" name="mobile" placeholder="Enter Mobile" required />
+  <br /><br />
+
+  <input type="file" name="image" required />
+  <br /><br />
+
+  <!-- PASSWORD WITH SHOW / HIDE -->
+  <div style="position: relative">
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Enter Password"
+      required
+    />
+
+    <span
+      onclick="togglePassword()"
+      style="
+        position: absolute;
+        left: 150px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+      "
+    >
+      👁️
+    </span>
+  </div>
+
+  <br /><br />
+
+  <input type="submit" value="Register" />
 </form>
 
-<% 
-    if (typeof message !== 'undefined' ) {
-        %>
-        <p style="color: green;"><%= message %></p>
-        <%
-    }
-%>
+<!-- SHOW SUCCESS / ERROR MESSAGE -->
+<% if (typeof message !== 'undefined') { %>
+<p style="color: green"><%= message %></p>
+<% } %> <% include('../layouts/footer.ejs') %>
 
-<% include('../layouts/footer.ejs') %>
+<!-- JS FOR SHOW/HIDE PASSWORD -->
+<script>
+  function togglePassword() {
+    const passwordField = document.getElementById("password");
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+    } else {
+      passwordField.type = "password";
+    }
+  }
+</script>

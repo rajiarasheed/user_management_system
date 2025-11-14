@@ -8,7 +8,7 @@ const securePassword= async (password) => {
         const hashPassword = await bcrypt.hash(password,10);
         return hashPassword;
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -19,7 +19,7 @@ const loadLogin=async (req,res) => {
     try {
         res.render("login");
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -48,7 +48,7 @@ const verifyLogin=async (req,res) => {
             res.render('login',{message:"email and password is incorrect"})
         }
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -63,7 +63,7 @@ const loadDashboard=async (req,res) => {
         const userData=await User.findById({_id:req.session.admin_id})
         res.render('home',{admin:userData})
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -74,7 +74,7 @@ const logout=async (req,res) => {
         req.session.destroy();
         res.redirect('/admin')
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -84,7 +84,7 @@ const loadForget= async (req,res) => {
     try {
         res.render('forget')
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -107,7 +107,7 @@ const forgetVerify= async (req,res) => {
             res.render("forget",{message:"Email is incorrect"})
         }
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -128,7 +128,7 @@ const loadForgetPassword = async (req, res) => {
             res.render('404', { message: "Invalid or expired token" });
         }
     } catch (error) {
-        console.log(error.message);
+       throw new Error(error.message);
         res.status(500).send("Server Error");
     }
 };
@@ -140,7 +140,7 @@ const resetPassword=async (req,res) => {
         const userData = await User.findByIdAndUpdate({_id:admin_id},{$set:{password:spassword,token:""}})
         res.redirect("/admin")
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -149,7 +149,7 @@ const adminDashboard= async (req,res) => {
         const usersData= await User.find({is_admin:0})
         res.render('dashboard',{users:usersData})
     } catch (error) {
-        console.log(error.message);
+       throw new Error(error.message);
         
     }
 }
@@ -157,7 +157,7 @@ const loadNewUser=async (req,res) => {
     try {
         res.render('new-user')
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -190,7 +190,7 @@ const addNewUser= async(req,res)=>{
             res.render('new-user',{message:"Something wrong..."})
         }
     }catch(error){
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -205,7 +205,7 @@ const loadEditUser= async (req,res) => {
         }
         
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -215,7 +215,7 @@ const updateUsers= async (req,res) => {
         const userData= await User.findByIdAndUpdate({_id:req.body.id},{$set:{name:req.body.name, email:req.body.email,mobile:req.body.mobile,is_verified:req.body.verify}});
         res.redirect('/admin/dashboard');
     } catch (error) {
-        console.log("error fro update usermessage",error.message);
+        throw new Error(error.message);
         
     }
 }
@@ -225,10 +225,20 @@ const deleteUser=async (req,res) => {
         const userData=await User.deleteOne({_id:id})
         res.redirect('/admin/dashboard')
     } catch (error) {
-        console.log(error.message);
+        throw new Error(error.message);
         
     }
 }
+const testError = async (req, res, next) => {
+  try {
+    // force an error
+    const x = undefinedVariable; // this will throw ReferenceError
+    res.send("You won't see this");
+  } catch (error) {
+    next(error); // send error to global handler
+  }
+};
+
 module.exports={
     loadLogin,
     verifyLogin,
@@ -243,5 +253,6 @@ module.exports={
     addNewUser,
     loadEditUser,
     updateUsers,
-    deleteUser
+    deleteUser,
+    testError
 }

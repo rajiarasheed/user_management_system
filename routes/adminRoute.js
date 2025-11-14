@@ -1,5 +1,5 @@
 const express=require("express")
-const admin_route= express();
+const admin_route = express.Router();
 
 const session=require('express-session');
 const config=require("../config/config");
@@ -16,11 +16,8 @@ admin_route.use(session({
 }))
 
 
-admin_route.set('view engine','ejs');
-admin_route.set('views','./views/admin');
-admin_route.use(express.static('public'))
-admin_route.set(bodyParser.json());
-admin_route.set(bodyParser.urlencoded({extended:true}));
+admin_route.use(bodyParser.json());
+admin_route.use(bodyParser.urlencoded({extended:true}));
 
 admin_route.get('/',auth.isLogout, adminController.loadLogin);
 admin_route.post('/',adminController.verifyLogin);
@@ -37,9 +34,7 @@ admin_route.post('/new-user',auth.isLogin,upload.single('image'),adminController
 admin_route.get('/edit-user',auth.isLogin,adminController.loadEditUser);
 admin_route.post('/edit-user',adminController.updateUsers);
 admin_route.get('/delete-user',auth.isLogin,adminController.deleteUser);
+admin_route.get('/admin/test-error',adminController.testError)
 
-// 404 handler
-admin_route.use((req, res) => {
-    res.status(404).render('404');
-});
+
 module.exports=admin_route;
