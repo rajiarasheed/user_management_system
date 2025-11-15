@@ -11,6 +11,11 @@ const app=express();
 app.set('view engine','ejs');
 app.set('views','./views');  // or './views/admin' depending on your structure
 app.use(express.static('public'));
+
+app.use((req,res,next)=>{
+res.setHeader("Cache-Control","no-store");
+next();
+});
 // for user routes
 const userRoute=require("./routes/userRoute");
 app.use("/",userRoute);

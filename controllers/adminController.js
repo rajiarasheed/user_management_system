@@ -17,7 +17,7 @@ const securePassword= async (password) => {
 // for load login page
 const loadLogin=async (req,res) => {
     try {
-        res.render("login");
+        res.render("admin/login");
     } catch (error) {
         throw new Error(error.message);
         
@@ -35,17 +35,17 @@ const verifyLogin=async (req,res) => {
            passwordMatch= await bcrypt.compare(password,userData.password) 
            if (passwordMatch) {
             if (userData.is_admin === 0) {
-                 res.render('login',{message:"email and password is incorrect"})
+                 res.render('admin/login',{message:"email and password is incorrect"})
             } else {
                 req.session.admin_id=userData._id;
                 res.redirect("/admin/home")
             }
             
            } else {
-             res.render('login',{message:"email and password is incorrect"})
+             res.render('admin/login',{message:"email and password is incorrect"})
            }
         } else {
-            res.render('login',{message:"email and password is incorrect"})
+            res.render('admin/login',{message:"email and password is incorrect"})
         }
     } catch (error) {
         throw new Error(error.message);
@@ -61,7 +61,7 @@ const loadDashboard=async (req,res) => {
             return res.redirect("/admin");
         }
         const userData=await User.findById({_id:req.session.admin_id})
-        res.render('home',{admin:userData})
+        res.render('admin/home',{admin:userData})
     } catch (error) {
         throw new Error(error.message);
         
@@ -82,7 +82,7 @@ const logout=async (req,res) => {
 // load forget page
 const loadForget= async (req,res) => {
     try {
-        res.render('forget')
+        res.render('admin/forget')
     } catch (error) {
         throw new Error(error.message);
         
@@ -96,15 +96,15 @@ const forgetVerify= async (req,res) => {
         const userData= await User.findOne({email:email});
         if (userData) {
             if (userData.is_admin ===0) {
-                res.render("forget",{message:"Email is incorrect"})
+                res.render("admin/forget",{message:"Email is incorrect"})
             } else {
                const randomString = randomstring.generate();
                const updatedData = await User.updateOne({email:email},{$set:{token:randomString}});
                sendResetPasswordMail(userData.name,userData.email,randomString);
-                res.render('forget',{message:"Please check your mail to reset password."})
+                res.render('admin/forget',{message:"Please check your mail to reset password."})
             }
         } else {
-            res.render("forget",{message:"Email is incorrect"})
+            res.render("admin/forget",{message:"Email is incorrect"})
         }
     } catch (error) {
         throw new Error(error.message);
@@ -122,7 +122,7 @@ const loadForgetPassword = async (req, res) => {
 
         if (tokenData) {
             // Token exists → show reset form
-            res.render('forget-password', { admin_id: tokenData._id });
+            res.render('admin/forget-password', { admin_id: tokenData._id });
         } else {
             // Token invalid or expired → show a message or 404 page
             res.render('404', { message: "Invalid or expired token" });
@@ -147,7 +147,7 @@ const resetPassword=async (req,res) => {
 const adminDashboard= async (req,res) => {
     try {
         const usersData= await User.find({is_admin:0})
-        res.render('dashboard',{users:usersData})
+        res.render('admin/dashboard',{users:usersData})
     } catch (error) {
        throw new Error(error.message);
         
@@ -155,7 +155,7 @@ const adminDashboard= async (req,res) => {
 }
 const loadNewUser=async (req,res) => {
     try {
-        res.render('new-user')
+        res.render('admin/new-user')
     } catch (error) {
         throw new Error(error.message);
         
@@ -166,6 +166,13 @@ const loadNewUser=async (req,res) => {
 
 const addNewUser= async(req,res)=>{
     try{
+        const existingUser = await User.findOne({ email: req.body.email });
+        
+            if (existingUser) {
+              return res.render("admin/new-user", {
+                message: "Email already exists. Please use a different email.",
+              });
+            }
         const password=randomstring.generate(8)
         const spassword=await securePassword(password)
         // const spassword=await securePassword(req.body.password)
@@ -187,7 +194,7 @@ const addNewUser= async(req,res)=>{
             res.redirect('/admin/dashboard')
         }else{
             
-            res.render('new-user',{message:"Something wrong..."})
+            res.render('admin/new-user',{message:"Something wrong..."})
         }
     }catch(error){
         throw new Error(error.message);
@@ -199,7 +206,7 @@ const loadEditUser= async (req,res) => {
         const id=req.query.id;
         const userData= await User.findById({_id:id});
         if (userData) {
-            res.render('edit-user',{user:userData})
+            res.render('admin/edit-user',{user:userData})
         } else {
             res.redirect('/admin/dashboard')
         }
