@@ -1,28 +1,43 @@
-const mongoose= require("mongoose");
-const express= require("express");
-const config=require('./config/config');
-mongoose.connect(config.mongoURI)
+const mongoose = require("mongoose");
+const express = require("express");
+const session = require("express-session");
+const config = require("./config/config");
+mongoose
+  .connect(config.mongoURI)
   .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log("DB connection error:", err));
+  .catch((err) => console.log("DB connection error:", err));
 
-const app=express();
+const app = express();
 
+app.use(
+  session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
-app.set('view engine','ejs');
-app.set('views','./views');  // or './views/admin' depending on your structure
-app.use(express.static('public'));
-
-app.use((req,res,next)=>{
-res.setHeader("Cache-Control","no-store");
-next();
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  next();
 });
+
+
+app.set("view engine", "ejs");
+app.set("views", [
+  __dirname + "/views/users",
+  __dirname + "/views/admin"
+]);
+
+app.use(express.static("public"));
+
 // for user routes
-const userRoute=require("./routes/userRoute");
-app.use("/",userRoute);
+const userRoute = require("./routes/userRoute");
+app.use("/", userRoute);
 
 // for admin routes
-const adminRoute=require("./routes/adminRoute");
-app.use("/admin",adminRoute);
+const adminRoute = require("./routes/adminRoute");
+app.use("/admin", adminRoute);
 
 // 404 handler
 app.use((req, res) => {
@@ -32,7 +47,9 @@ app.use((req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack); // logs the full error stack
-  res.status(500).render("error", { message: err.message || "Something went wrong" });
+  res
+    .status(500)
+    .render("error", { message: err.message || "Something went wrong" });
 });
 
-app.listen(config.port,()=>console.log("Server running..."));
+app.listen(config.port, () => console.log("Server running..."));
