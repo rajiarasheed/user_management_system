@@ -11,6 +11,7 @@ const isLogin=async (req,res,next) => {
         
     } catch (error) {
         console.log(error.message);
+        return res.redirect('/admin')
         
     }
 }
@@ -25,6 +26,7 @@ const isLogout=async (req,res,next) => {
         
     } catch (error) {
         console.log(error.message);
+        return res.redirect('/admin/home');
         
     }
 }
@@ -32,3 +34,5 @@ module.exports={
     isLogin,
     isLogout
 }
+
+

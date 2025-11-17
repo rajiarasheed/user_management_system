@@ -23,11 +23,11 @@ app.use((req, res, next) => {
 });
 
 
+const path = require("path");
+
 app.set("view engine", "ejs");
-app.set("views", [
-  __dirname + "/views/users",
-  __dirname + "/views/admin"
-]);
+app.set("views", path.join(__dirname, "views"));
+
 
 app.use(express.static("public"));
 
